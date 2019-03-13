@@ -8,20 +8,14 @@
 namespace Spryker\Client\QuoteRequest\QuoteRequest;
 
 use Generated\Shared\Transfer\QuoteRequestTransfer;
+use Generated\Shared\Transfer\QuoteResponseTransfer;
 
-interface QuoteRequestCheckerInterface
+interface QuoteRequestToQuoteConverterInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteRequestTransfer $quoteRequestTransfer
      *
-     * @return bool
+     * @return \Generated\Shared\Transfer\QuoteResponseTransfer
      */
-    public function isQuoteRequestCancelable(QuoteRequestTransfer $quoteRequestTransfer): bool;
-
-    /**
-     * @param \Generated\Shared\Transfer\QuoteRequestTransfer $quoteRequestTransfer
-     *
-     * @return bool
-     */
-    public function isQuoteRequestReady(QuoteRequestTransfer $quoteRequestTransfer): bool;
+    public function convertQuoteRequestToQuote(QuoteRequestTransfer $quoteRequestTransfer): QuoteResponseTransfer;
 }
