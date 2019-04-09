@@ -5,13 +5,13 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Client\QuoteRequest\QuoteRequest;
+namespace Spryker\Client\QuoteRequest\Status;
 
 use Generated\Shared\Transfer\QuoteRequestTransfer;
 use Spryker\Client\QuoteRequest\QuoteRequestConfig;
 use Spryker\Shared\QuoteRequest\QuoteRequestConfig as SharedQuoteRequestConfig;
 
-class QuoteRequestChecker implements QuoteRequestCheckerInterface
+class QuoteRequestStatus implements QuoteRequestStatusInterface
 {
     /**
      * @var \Spryker\Client\QuoteRequest\QuoteRequestConfig

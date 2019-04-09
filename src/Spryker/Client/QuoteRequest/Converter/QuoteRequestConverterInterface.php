@@ -5,12 +5,12 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Client\QuoteRequest\QuoteRequest;
+namespace Spryker\Client\QuoteRequest\Converter;
 
 use Generated\Shared\Transfer\QuoteRequestTransfer;
 use Generated\Shared\Transfer\QuoteResponseTransfer;
 
-interface QuoteRequestToQuoteConverterInterface
+interface QuoteRequestConverterInterface
 {
     /**
      * @param \Generated\Shared\Transfer\QuoteRequestTransfer $quoteRequestTransfer

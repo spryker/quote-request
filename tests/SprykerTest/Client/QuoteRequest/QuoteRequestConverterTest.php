@@ -5,7 +5,7 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace SprykerTest\Client\QuoteRequest\Client;
+namespace SprykerTest\Client\QuoteRequest;
 
 use Codeception\Test\Unit;
 use DateTime;
@@ -19,11 +19,11 @@ use Generated\Shared\Transfer\QuoteRequestVersionTransfer;
 use Generated\Shared\Transfer\QuoteResponseTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use PHPUnit\Framework\MockObject\MockObject;
+use Spryker\Client\QuoteRequest\Converter\QuoteRequestConverter;
 use Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToPersistentCartClientInterface;
 use Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToQuoteClientInterface;
-use Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestChecker;
-use Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestToQuoteConverter;
 use Spryker\Client\QuoteRequest\QuoteRequestConfig;
+use Spryker\Client\QuoteRequest\Status\QuoteRequestStatus;
 use Spryker\Shared\QuoteRequest\QuoteRequestConfig as SharedQuoteRequestConfig;
 
 /**
@@ -31,26 +31,25 @@ use Spryker\Shared\QuoteRequest\QuoteRequestConfig as SharedQuoteRequestConfig;
  * @group SprykerTest
  * @group Client
  * @group QuoteRequest
- * @group Client
- * @group QuoteRequestToQuoteConverterTest
+ * @group QuoteRequestConverterTest
  * Add your own group annotations below this line
  */
-class QuoteRequestToQuoteConverterTest extends Unit
+class QuoteRequestConverterTest extends Unit
 {
     /**
-     * @uses \Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestToQuoteConverter::GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS
+     * @uses \Spryker\Client\QuoteRequest\Converter\QuoteRequestConverter::GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS
      */
     protected const GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS = 'quote_request.checkout.validation.error.wrong_status';
 
     /**
-     * @uses \Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestToQuoteConverter::GLOSSARY_KEY_WRONG_CONVERT_QUOTE_REQUEST_VALID_UNTIL
+     * @uses \Spryker\Client\QuoteRequest\Converter\QuoteRequestConverter::GLOSSARY_KEY_WRONG_CONVERT_QUOTE_REQUEST_VALID_UNTIL
      */
     protected const GLOSSARY_KEY_WRONG_CONVERT_QUOTE_REQUEST_VALID_UNTIL = 'quote_request.checkout.convert.error.wrong_valid_until';
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestToQuoteConverter
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Client\QuoteRequest\Converter\QuoteRequestConverter
      */
-    protected $quoteRequestToQuoteConverterMock;
+    protected $quoteRequestConverterMock;
 
     /**
      * @return void
@@ -59,7 +58,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
     {
         parent::setUp();
 
-        $this->quoteRequestToQuoteConverterMock = $this->createQuoteRequestToQuoteConverterMock();
+        $this->quoteRequestConverterMock = $this->createQuoteRequestConverterMock();
     }
 
     /**
@@ -71,7 +70,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         $quoteRequestTransfer = $this->createQuoteRequestTransfer();
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertTrue($quoteResponseTransfer->getIsSuccessful());
@@ -89,7 +88,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         );
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertTrue($quoteResponseTransfer->getIsSuccessful());
@@ -104,7 +103,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         $quoteRequestTransfer = $this->createQuoteRequestTransfer(SharedQuoteRequestConfig::STATUS_WAITING);
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertFalse($quoteResponseTransfer->getIsSuccessful());
@@ -126,7 +125,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         );
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToLockedQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertFalse($quoteResponseTransfer->getIsSuccessful());
@@ -145,7 +144,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         $quoteRequestTransfer = $this->createQuoteRequestTransfer(SharedQuoteRequestConfig::STATUS_DRAFT);
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertTrue($quoteResponseTransfer->getIsSuccessful());
@@ -160,7 +159,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
         $quoteRequestTransfer = $this->createQuoteRequestTransfer(SharedQuoteRequestConfig::STATUS_WAITING);
 
         // Act
-        $quoteResponseTransfer = $this->quoteRequestToQuoteConverterMock->convertQuoteRequestToQuote($quoteRequestTransfer);
+        $quoteResponseTransfer = $this->quoteRequestConverterMock->convertQuoteRequestToQuote($quoteRequestTransfer);
 
         // Assert
         $this->assertFalse($quoteResponseTransfer->getIsSuccessful());
@@ -173,9 +172,9 @@ class QuoteRequestToQuoteConverterTest extends Unit
     /**
      * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    protected function createQuoteRequestToQuoteConverterMock(): MockObject
+    protected function createQuoteRequestConverterMock(): MockObject
     {
-        return $this->getMockBuilder(QuoteRequestToQuoteConverter::class)
+        return $this->getMockBuilder(QuoteRequestConverter::class)
             ->setConstructorArgs([
                 $this->createQuoteRequestToPersistentCartClientInterfaceMock(),
                 $this->createQuoteRequestToQuoteClientInterfaceMock(),
@@ -225,7 +224,7 @@ class QuoteRequestToQuoteConverterTest extends Unit
      */
     protected function createQuoteRequestCheckerMock(): MockObject
     {
-        return $this->getMockBuilder(QuoteRequestChecker::class)
+        return $this->getMockBuilder(QuoteRequestStatus::class)
             ->setConstructorArgs([$this->createQuoteRequestConfigMock()])
             ->setMethods(null)
             ->getMock();
