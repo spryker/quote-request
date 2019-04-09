@@ -5,7 +5,7 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Client\QuoteRequest\QuoteRequest;
+namespace Spryker\Client\QuoteRequest\Reader;
 
 use Generated\Shared\Transfer\QuoteRequestTransfer;
 

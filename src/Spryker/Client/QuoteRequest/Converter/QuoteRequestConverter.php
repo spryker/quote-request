@@ -5,15 +5,16 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Client\QuoteRequest\QuoteRequest;
+namespace Spryker\Client\QuoteRequest\Converter;
 
 use Generated\Shared\Transfer\QuoteErrorTransfer;
 use Generated\Shared\Transfer\QuoteRequestTransfer;
 use Generated\Shared\Transfer\QuoteResponseTransfer;
 use Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToPersistentCartClientInterface;
 use Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToQuoteClientInterface;
+use Spryker\Client\QuoteRequest\Status\QuoteRequestStatusInterface;
 
-class QuoteRequestToQuoteConverter implements QuoteRequestToQuoteConverterInterface
+class QuoteRequestConverter implements QuoteRequestConverterInterface
 {
     protected const GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS = 'quote_request.checkout.validation.error.wrong_status';
     protected const GLOSSARY_KEY_WRONG_CONVERT_QUOTE_REQUEST_VALID_UNTIL = 'quote_request.checkout.convert.error.wrong_valid_until';
@@ -29,23 +30,23 @@ class QuoteRequestToQuoteConverter implements QuoteRequestToQuoteConverterInterf
     protected $quoteClient;
 
     /**
-     * @var \Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestCheckerInterface
+     * @var \Spryker\Client\QuoteRequest\Status\QuoteRequestStatusInterface
      */
-    protected $quoteRequestChecker;
+    protected $quoteRequestStatus;
 
     /**
      * @param \Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToPersistentCartClientInterface $persistentCartClient
      * @param \Spryker\Client\QuoteRequest\Dependency\Client\QuoteRequestToQuoteClientInterface $quoteClient
-     * @param \Spryker\Client\QuoteRequest\QuoteRequest\QuoteRequestCheckerInterface $quoteRequestChecker
+     * @param \Spryker\Client\QuoteRequest\Status\QuoteRequestStatusInterface $quoteRequestStatus
      */
     public function __construct(
         QuoteRequestToPersistentCartClientInterface $persistentCartClient,
         QuoteRequestToQuoteClientInterface $quoteClient,
-        QuoteRequestCheckerInterface $quoteRequestChecker
+        QuoteRequestStatusInterface $quoteRequestStatus
     ) {
         $this->persistentCartClient = $persistentCartClient;
         $this->quoteClient = $quoteClient;
-        $this->quoteRequestChecker = $quoteRequestChecker;
+        $this->quoteRequestStatus = $quoteRequestStatus;
     }
 
     /**
@@ -55,7 +56,7 @@ class QuoteRequestToQuoteConverter implements QuoteRequestToQuoteConverterInterf
      */
     public function convertQuoteRequestToLockedQuote(QuoteRequestTransfer $quoteRequestTransfer): QuoteResponseTransfer
     {
-        if (!$this->quoteRequestChecker->isQuoteRequestReady($quoteRequestTransfer)) {
+        if (!$this->quoteRequestStatus->isQuoteRequestReady($quoteRequestTransfer)) {
             return $this->getErrorResponse(static::GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS);
         }
 
@@ -81,7 +82,7 @@ class QuoteRequestToQuoteConverter implements QuoteRequestToQuoteConverterInterf
      */
     public function convertQuoteRequestToQuote(QuoteRequestTransfer $quoteRequestTransfer): QuoteResponseTransfer
     {
-        if (!$this->quoteRequestChecker->isQuoteRequestEditable($quoteRequestTransfer)) {
+        if (!$this->quoteRequestStatus->isQuoteRequestEditable($quoteRequestTransfer)) {
             return $this->getErrorResponse(static::GLOSSARY_KEY_WRONG_QUOTE_REQUEST_STATUS);
         }
 
