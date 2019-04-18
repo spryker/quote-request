@@ -29,5 +29,4 @@ suites:
                 - \SprykerTest\Shared\CompanyUser\Helper\CompanyUserHelper
                 - \SprykerTest\Zed\CompanyBusinessUnit\Helper\CompanyBusinessUnitHelper
                 - \SprykerTest\Shared\Quote\Helper\PersistentQuoteHelper
-                - \SprykerTest\Shared\Product\Helper\ProductDataHelper
                 - \SprykerTest\Shared\QuoteRequest\Helper\QuoteRequestHelper
