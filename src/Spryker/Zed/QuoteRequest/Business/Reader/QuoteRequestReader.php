@@ -65,7 +65,6 @@ class QuoteRequestReader implements QuoteRequestReaderInterface
             );
         }
 
-        /** @var array<\Generated\Shared\Transfer\QuoteRequestTransfer> $quoteRequestTransfers */
         $quoteRequestTransfers = $this
             ->getQuoteRequestCollectionByFilter($quoteRequestFilterTransfer)
             ->getQuoteRequests()
@@ -134,7 +133,7 @@ class QuoteRequestReader implements QuoteRequestReaderInterface
     public function findCustomerReference(CompanyUserTransfer $companyUserTransfer): ?string
     {
         $customerReferences = $this->companyUserFacade
-            ->getCustomerReferencesByCompanyUserIds([$companyUserTransfer->getIdCompanyUserOrFail()]);
+            ->getCustomerReferencesByCompanyUserIds([$companyUserTransfer->getIdCompanyUser()]);
 
         return array_shift($customerReferences);
     }
